@@ -1,0 +1,294 @@
+:root {
+
+  --color-primary: #1abc9c;
+  --color-secondary: #2c3e50;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-light-black: #1a252f;
+  --color-pink: #d63384;
+
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none !important;
+
+}
+
+body {
+  background-color: var(--color-white);
+  padding-top: 4.5rem;
+}
+
+p {
+  color: var(--color-white);
+
+
+}
+
+/* line */
+.home i,
+.about i,
+.portfolio i,
+.contact i {
+  color: var(--color-white);
+  font-size: 1.5rem;
+}
+
+.home .line,
+.about .line,
+.portfolio .line,
+.contact .line {
+
+  width: 10%;
+  height: 3px;
+  background-color: var(--color-white);
+
+}
+
+.portfolio i,
+.contact i {
+  color: var(--color-secondary);
+}
+
+.portfolio .line,
+.contact .line {
+  background-color: var(--color-secondary);
+}
+
+/* Navbar */
+
+.navbar {
+  background-color: var(--color-secondary);
+  padding-block: 1.5rem !important ;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar.scrolled-down {
+  padding-block: .5rem !important; /* Padding when scrolling down */
+}
+
+.navbar.scrolled-up {
+  padding-block: 1.5rem !important ; /* Padding when scrolling up */
+}
+.navbar .navbar-brand {
+  color: var(--color-white);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.navbar .navbar-brand:hover {
+  color: var(--color-white);
+}
+
+.navbar .nav-link {
+  color: var(--color-white);
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-inline: 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: var(--color-primary);
+}
+
+.navbar .nav-link.active {
+  color: var(--color-white) !important;
+  background-color: var(--color-primary);
+  border-radius: 2px;
+}
+
+/* footer */
+
+.footer .footer__top {
+  padding-block: 3rem;
+  background-color: var(--color-secondary);
+}
+
+.footer .copyright {
+  background-color: var(--color-light-black);
+}
+
+.footer h3 {
+  color: var(--color-white);
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.footer .social-icons i {
+  color: var(--color-white);
+  font-size: 1.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--color-white);
+
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  /* Changed from align-items */
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  /* Added for consistent circle */
+  height: 2.5rem;
+  /* Added for consistent circle */
+}
+
+.footer .social-icons i:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+  /* Optional: Add hover effect */
+}
+
+
+/* home */
+.home {
+  background-color: var(--color-primary);
+  height: 90vh;
+}
+
+.home .avatar {
+  width: 200px;
+  height: 200px;
+}
+
+.home h1 {
+  color: var(--color-white);
+  font-size: 3rem;
+  font-weight: bold;
+  margin-block: 1rem;
+}
+
+.home i {
+  color: var(--color-white);
+  font-size: 1.5rem;
+
+
+
+}
+
+.home .line {
+
+  width: 10%;
+  height: 3px;
+  background-color: var(--color-white);
+
+}
+
+
+/* about */
+.about {
+  background-color: var(--color-primary);
+  height: 90vh;
+}
+
+.about h1 {
+  color: var(--color-white);
+  font-size: 3rem;
+  font-weight: bold;
+  margin-block: 1rem;
+}
+
+/* portfolio */
+
+.portfolio h1 {
+  color: var(--color-secondary);
+  font-size: 3rem;
+  font-weight: bold;
+
+}
+
+.portfolio .portfolio-card {
+  cursor: pointer;
+}
+
+.portfolio .content img {
+
+  height: 4rem
+}
+
+.portfolio .layer {
+  background-color: var(--color-primary);
+  opacity: 0;
+
+  visibility: hidden;
+  transition: all ease-in-out 0.3s;
+}
+
+.portfolio .portfolio-card:hover .layer {
+  opacity: .8;
+  visibility: visible;
+}
+
+
+
+.pro-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  transition: all ease-in-out 0.3s;
+  z-index: 9999;
+}
+
+.pro-layer.visible {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* contact */
+.contact h1 {
+  color: var(--color-secondary);
+  font-size: 3rem;
+  font-weight: bold;
+
+}
+
+
+.form-group .form-control {
+  outline: none !important;
+  border: none !important;
+  border-bottom: 1px solid var(--color-secondary) !important;
+  background-color: transparent;
+  color: var(--color-white);
+  font-size: 1.2rem;
+
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.form-group .form-control:focus {
+  border-color: var(--color-secondary);
+  box-shadow: none;
+}
+form .btn {
+  outline: none !important;
+  border: none !important;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-size: 1.2rem;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+ 
+}
+form .btn:hover {
+  background-color: var(--color-secondary);
+    background-color: var(--color-primary);
+}
