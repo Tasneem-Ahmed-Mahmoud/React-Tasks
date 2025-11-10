@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Input, DatePicker, Select, SelectItem, Button } from "@heroui/react";
 import { Link } from 'react-router-dom';
 import { useForm } from "react-hook-form";
-// import { yupResolver } from "@hookform/resolvers/yup"
-// import * as yup from "yup"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { registerSchema } from '../../lib/validationSchemas/authSchema'
+
 export default function Register() {
   // controlled component ******
   //const [nameInput,setNameInput] = useState('');
@@ -68,7 +69,7 @@ export default function Register() {
       dateOfBirth: '',
       gender: ''
     },
-    //  resolver: yupResolver(schema),
+     resolver: zodResolver(registerSchema),
   })
 
   // console.log(register())
@@ -94,19 +95,28 @@ export default function Register() {
         <div className="inputs-form space-y-5">
 
           <Input {...register("name", { required: "name is required", maxLength: { message: "name is too long", value: 3 } })}
-            isRequired validate={'faded'} label="Name" type="name" />
+          errorMessage={errors.name?.message} isInvalid={Boolean(errors.name)}
+          isRequired validate={'faded'} label="Name" type="name" />
           {/* {errors.name && <p className="text-red-500 ">{errors.name.message}</p>}  */}
 
           <Input {...register("email")}
-            isRequired validate={'faded'} label="Email" type="email" />
+            isRequired validate={'faded'} label="Email" type="email" 
+            errorMessage={errors.email?.message} isInvalid={Boolean(errors.email)}
+            />
           <Input  {...register("password")}
-            isRequired validate={'faded'} label="Password" type="password" />
+            isRequired validate={'faded'} label="Password" type="password" 
+            errorMessage={errors.password?.message} isInvalid={Boolean(errors.password)}
+            />
           <Input {...register("rePassword")}
             isRequired validate={'faded'} label="RePassword" type="password" />
 
           <div className="flex gap-2">
-            <DatePicker label="Birth date" isRequired {...register("dateOfBirth")} />
-            <Select label="Select an gender" isRequired {...register("gender")}>
+            <DatePicker label="Birth date" isRequired {...register("dateOfBirth")} 
+              errorMessage={errors.dateOfBirth?.message} isInvalid={Boolean(errors.dateOfBirth)}
+            />
+            <Select label="Select an gender" isRequired {...register("gender")}
+              errorMessage={errors.gender?.message} isInvalid={Boolean(errors.gender)}
+            >
               <SelectItem value="option2">Male</SelectItem>
               <SelectItem value="option1">Female</SelectItem>
             </Select>
