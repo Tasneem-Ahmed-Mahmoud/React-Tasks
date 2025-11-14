@@ -1,9 +1,14 @@
+
 import { useState, useRef, useEffect } from 'react';
-import { Input, DatePicker, Select, SelectItem, Button } from "@heroui/react";
-import { Link } from 'react-router-dom';
+import { Input, DatePicker, Select, SelectItem, Button,  Alert } from "@heroui/react";
+import { Link ,useNavigate} from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerSchema } from '../../lib/validationSchemas/authSchema'
+import { FaEye } from "react-icons/fa6";
+import { FaEyeSlash } from "react-icons/fa";
+import { registerUser } from '../../services/authService';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Register() {
   // controlled component ******
@@ -55,10 +60,14 @@ export default function Register() {
   //   age: yup.number().positive().integer().required(),
   // })
   // .required()
+  const [errorMsg, setErrorMsg ] = useState('');
+  const [successMsg, setSuccessMsg ] = useState('');
+ const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     mode: "onBlur",
     defaultValues: {
@@ -69,15 +78,33 @@ export default function Register() {
       dateOfBirth: '',
       gender: ''
     },
-     resolver: zodResolver(registerSchema),
+    resolver: zodResolver(registerSchema),
   })
 
   // console.log(register())
 
-  function onSubmit(data) {
-    console.log(data)
+  async function onSubmit(data) {
+    setErrorMsg('');
+    setSuccessMsg('');
+    try {
+      const response = await registerUser(data);
+      console.log(response);
+      // Handle successful registration
+      
+     // setSuccessMsg(response.data?.message|| "Registration successful");
 
+     toast.success(response.data?.message|| "Registration successful");
+      // navigate("/login")
 
+navigate("/auth/login")
+
+    } catch (error) {
+      
+
+      // Handle registration error
+      console.log(error)
+       setErrorMsg(error.response?.data?.error || "Registration failed");
+    }
   }
 
 
@@ -95,35 +122,51 @@ export default function Register() {
         <div className="inputs-form space-y-5">
 
           <Input {...register("name", { required: "name is required", maxLength: { message: "name is too long", value: 3 } })}
-          errorMessage={errors.name?.message} isInvalid={Boolean(errors.name)}
-          isRequired validate={'faded'} label="Name" type="name" />
+            errorMessage={errors.name?.message} isInvalid={Boolean(errors.name)}
+            isRequired validate={'faded'} label="Name" type="name" />
           {/* {errors.name && <p className="text-red-500 ">{errors.name.message}</p>}  */}
-
           <Input {...register("email")}
-            isRequired validate={'faded'} label="Email" type="email" 
+            isRequired validate={'faded'} label="Email" type="email"
             errorMessage={errors.email?.message} isInvalid={Boolean(errors.email)}
-            />
-          <Input  {...register("password")}
-            isRequired validate={'faded'} label="Password" type="password" 
-            errorMessage={errors.password?.message} isInvalid={Boolean(errors.password)}
-            />
+          />
+          <Input
+            {...register("password")}
+            isRequired
+            label="Password"
+            errorMessage={errors.password?.message}
+            isInvalid={Boolean(errors.password)}
+            type={showPassword ? "text" : "password"}
+            endContent={
+              showPassword ?
+                <FaEyeSlash className="text-3xl cursor-pointer" onClick={() => setShowPassword(false)} /> :
+                <FaEye className="text-3xl cursor-pointer" onClick={() => setShowPassword(true)} />
+            }
+          />
           <Input {...register("rePassword")}
-            isRequired validate={'faded'} label="RePassword" type="password" />
+            isRequired validate={'faded'} label="RePassword" type="password"
+            errorMessage={errors.rePassword?.message} isInvalid={Boolean(errors.rePassword)}
+          />
 
           <div className="flex gap-2">
-            <DatePicker label="Birth date" isRequired {...register("dateOfBirth")} 
+            {/* <DatePicker label="Birth date" isRequired {...register("dateOfBirth")}
+              errorMessage={errors.dateOfBirth?.message} isInvalid={Boolean(errors.dateOfBirth)}
+            /> */}
+
+            <Input type="date"
+              {...register("dateOfBirth")}
+              isRequired validate={'faded'} label="Birth date"
               errorMessage={errors.dateOfBirth?.message} isInvalid={Boolean(errors.dateOfBirth)}
             />
             <Select label="Select an gender" isRequired {...register("gender")}
               errorMessage={errors.gender?.message} isInvalid={Boolean(errors.gender)}
             >
-              <SelectItem value="option2">Male</SelectItem>
-              <SelectItem value="option1">Female</SelectItem>
+              <SelectItem key="male">Male</SelectItem>
+              <SelectItem key="female">Female</SelectItem>
             </Select>
           </div>
 
           <div className="flex justify-between items-center">
-            <Button type='submit' className="bg-linear-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">submit</Button>
+            <Button isLoading={isSubmitting} type='submit' className="bg-linear-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">submit</Button>
             <span>Already have an account?
               <Link to="/auth/login" className='bold ms-1'>SignIn</Link>
             </span>
@@ -131,6 +174,8 @@ export default function Register() {
 
         </div>
 
+        {errorMsg && <Alert color="danger" title={errorMsg} className='w=1/2' />}
+        {successMsg && <Alert color="success" title={successMsg} className='w=1/2' />}
 
       </form>
     </>
