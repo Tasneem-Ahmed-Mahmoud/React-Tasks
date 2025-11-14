@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const url= import.meta.env.VITE_BASE_URL;
+
+//console.log(url)
 export async function registerUser(data) {
-    const response = await axios.post("https://linked-posts.routemisr.com/users/signup", data, {
+    const response = await axios.post(`${url}/users/signup`, data, {
         headers: {
             "Content-Type": "application/json"
         }
@@ -10,7 +13,7 @@ export async function registerUser(data) {
 }
 
 export async function loginUser(data) {
-    const response = await axios.post("https://linked-posts.routemisr.com/users/signin", data, {
+    const response = await axios.post(`${url}/users/signin`, data, {
         headers: {
             "Content-Type": "application/json"
         }
@@ -19,11 +22,4 @@ export async function loginUser(data) {
 }
 
 
-// {
-//     "name": "Ahmed Bahnasy",
-//     "email":"bahnasy2040101@gmail.com",
-//     "password":"Bahnasy@123",
-//     "rePassword":"Bahnasy@123",
-//     "dateOfBirth":"7-10-1994",
-//     "gender":"male"
-// }
+

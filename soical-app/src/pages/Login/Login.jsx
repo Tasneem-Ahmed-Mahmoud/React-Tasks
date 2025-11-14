@@ -30,8 +30,7 @@ export default function Login() {
       console.log(response)
       toast.success(response.data?.message || "Login successful");
       // token saved in local storage
-       token=response.data?.token;
-      localStorage.setItem("token",token);
+      localStorage.setItem("token",response.data?.token);
 
 
 
