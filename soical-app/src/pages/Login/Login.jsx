@@ -1,4 +1,4 @@
-import React from 'react'
+import React ,{useContext} from 'react'
 // import { useState, useRef, useEffect } from 'react';
 import { Input, Button } from "@heroui/react";
 import { useForm } from "react-hook-form";
@@ -6,10 +6,13 @@ import { loginUser } from '../../services/authService';
 import { ToastContainer, toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../../lib/validationSchemas/authSchema';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { set } from 'zod';
+import { authContext } from '../../context/AuthContext';
+
 export default function Login() {
-
-
+const {setToken} = useContext(authContext)
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -30,7 +33,9 @@ export default function Login() {
       console.log(response)
       toast.success(response.data?.message || "Login successful");
       // token saved in local storage
-      localStorage.setItem("token",response.data?.token);
+      localStorage.setItem("token", response.data?.token);
+      setToken(response.data?.token)
+      navigate("/home")
 
 
 
@@ -59,10 +64,10 @@ export default function Login() {
           <Input {...register("email")} isRequired validate={'faded'} label="Email" type="email" />
           <Input  {...register("password")} isRequired validate={'faded'} label="Password" type="password" />
 
-  <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center">
             <Button isLoading={isSubmitting} type='submit' className="bg-linear-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">submit</Button>
             <span>Don't have an account?
-              <Link to="/auth/register" className='bold ms-1'>SignUp</Link>
+              <Link to="/register" className='bold ms-1'>SignUp</Link>
             </span>
           </div>
         </div>

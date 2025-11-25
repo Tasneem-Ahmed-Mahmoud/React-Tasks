@@ -168,7 +168,7 @@ navigate("/auth/login")
           <div className="flex justify-between items-center">
             <Button isLoading={isSubmitting} type='submit' className="bg-linear-to-tr from-pink-500 to-yellow-500 text-white shadow-lg">submit</Button>
             <span>Already have an account?
-              <Link to="/auth/login" className='bold ms-1'>SignIn</Link>
+              <Link to="/login" className='bold ms-1'>SignIn</Link>
             </span>
           </div>
 
