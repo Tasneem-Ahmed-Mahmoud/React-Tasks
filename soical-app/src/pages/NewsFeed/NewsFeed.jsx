@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { getPosts } from '../../services/postServices'
 import { set } from 'zod'
 import Skeleton from '../../components/Skeleton/Skeleton'
+import CreatePost from '../../components/CreatePost/CreatePost'
 export default function NewsFeed() {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
@@ -19,13 +20,13 @@ export default function NewsFeed() {
   return (
     <>
 
-    
-              {posts.length === 0 ? [...Array(5)].map((s,index)=><Skeleton key={index}/>) :                               
-              posts && posts.map((post) => (
-              <Post key={post.id} post={post} />
-              ))}
+ <CreatePost />
+      {posts.length === 0 ? [...Array(5)].map((s, index) => <Skeleton key={index} />) :
+        posts && posts.map((post) => (
+          <Post key={post.id} post={post} />
+        ))}
 
-           
+
     </>
   )
 }
