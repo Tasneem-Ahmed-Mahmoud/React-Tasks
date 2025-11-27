@@ -11,12 +11,15 @@ import {
   DropdownMenu,
   Avatar,
   Badge,
+ Skeleton ,
 } from "@heroui/react";
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png'
 import { RiMessage2Fill } from "react-icons/ri";
 import { FaBell } from "react-icons/fa";
 import { authContext } from '../../context/AuthContext';
+import { userContext } from '../../context/userContext';
+import { is } from 'zod/v4/locales';
 
 export const SearchIcon = ({ size = 24, strokeWidth = 1.5, width, height, ...props }) => {
   return (
@@ -51,6 +54,7 @@ export const SearchIcon = ({ size = 24, strokeWidth = 1.5, width, height, ...pro
 export default function Navbar() {
 
   const { token, setToken } = useContext(authContext)
+  const { user, setUser, isLoading } = useContext(userContext)
   const navigate = useNavigate();
 
   function logout() {
@@ -114,20 +118,22 @@ export default function Navbar() {
 
         <Dropdown placement="bottom-end">
           <DropdownTrigger className="cursor-pointer">
-            <Avatar
+           {
+            isLoading ? <Skeleton className="flex rounded-full w-12 h-12 shrink-0" />: <Avatar
               isBordered
               as="button"
               className="transition-transform"
               color="secondary"
-              name="Jason Hughes"
+              name={user?.name}
               size="sm"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+              src={user?.photo||user?.avatar}
             />
+           }
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
+              <p className="font-semibold">{user?.email}</p>
             </DropdownItem>
             <DropdownItem key="settings">My Profile</DropdownItem>
 

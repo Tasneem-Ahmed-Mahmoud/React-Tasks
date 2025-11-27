@@ -1,46 +1,72 @@
 import axios from "axios";
+import { BiBody } from "react-icons/bi";
+
 
 const url = import.meta.env.VITE_BASE_URL;
 
-export  async function getPosts() {
+export async function getPosts() {
   return axios.get(`${url}/posts`, {
     headers: {
-      "Content-Type": "application/json",
       token: localStorage.getItem("token"),
+    },
+    params: {
+      page: 1,
+      limit: 20,
+      sort: "-createdAt",
     },
   });
 }
 
 async function getPost(id) {
-  return await axios.get(`${url}/posts/${id}`,{
+  return await axios.get(`${url}/posts/${id}`, {
     headers: {
-      "Content-Type": "application/json",
       token: localStorage.getItem("token"),
     },
   });
- 
 }
 
-async function createPost(data) {
-  const response = await axios.post(`${url}/posts`, data);
+async function createPost(formData) {
+  const response = await axios.post(`${url}/posts`, formData, {
+    headers: {
+      // "Content-Type": "multipart/form-data",
+      token: localStorage.getItem("token"),
+    },
+  });
   return response;
 }
 
-async function updatePost(id, data) {
-  const response = await axios.put(`${url}/posts/${id}`, data);
+
+async function updatePost(id, formData) {
+  const response = await axios.put(`${url}/posts/${id}`, formData, {
+    headers: {
+      token: localStorage.getItem("token"),
+    },
+  });
   return response;
 }
 
 async function deletePost(id) {
-  const response = await axios.delete(`${url}/posts/${id}`);
+  const response = await axios.delete(`${url}/posts/${id}`,{
+    headers: {
+      token: localStorage.getItem("token"),
+    },
+  });
   return response;
 }
 
+export async function getPostComments(id) {
+  const response = await axios.get(`${url}/posts/${id}/comments`, {
+    headers: {
+      token: localStorage.getItem("token"),
+    },
+  });
+  return response;
+}
 
 export {
   // getPosts,
   getPost,
   createPost,
-  updatePost, 
-  deletePost
-}
+  updatePost,
+  deletePost,
+};

@@ -1,23 +1,20 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useRef } from 'react'
 import { userContext } from '../../context/userContext';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem } from "@heroui/dropdown";
 import { Spinner } from "@heroui/spinner";
 import { BsThreeDotsVertical, BsEmojiSmile } from 'react-icons/bs';
-import { deleteComment , updateComment } from '../../services/commentServices';
+import { deleteComment, updateComment } from '../../services/commentServices'; // Make sure updateComment is imported
 import { ToastContainer, toast } from 'react-toastify';
 import { fi } from 'zod/v4/locales';
-import { useState } from 'react';
 import { getPostComments } from '../../services/postServices';
 import { set } from 'zod';
-import { useRef} from 'react';
 
-export default function CardFooter({ comment, postUserId ,postId, setPostComments }) {
+export default function CardFooter({ comment, postUserId, postId, setPostComments }) {
   const { user, setUser } = useContext(userContext)
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const editInputRef = useRef(null);
-
 
   async function deleteCommentHandler() {
     setIsLoading(true);
@@ -38,10 +35,29 @@ export default function CardFooter({ comment, postUserId ,postId, setPostComment
       const response = await getPostComments(postId);
       console.log(response);
       setPostComments(response?.data?.comments);
-      
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
+    }
+  }
+
+  async function updateCommentHandler() {
+    if (!editedContent.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await updateComment(comment._id, { content: editedContent });
+      console.log(response);
+      toast.success(response?.data?.message || "Comment updated successfully");
+      setIsEditing(false);
+      getNewComments(postId);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to update comment");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -55,24 +71,7 @@ export default function CardFooter({ comment, postUserId ,postId, setPostComment
     }, 0);
   }
 
-  async function updateCommentHandler() {
-    setIsLoading(true);
-    try {
-      const response = await updateComment(comment._id, editedContent );
-      console.log(response);
-      setIsEditing(false);
-      toast.success(response?.data?.message || "Comment updated successfully");
-      getNewComments(postId);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-
-  }
-
-
-   function handleCancelEdit() {
+  function handleCancelEdit() {
     setIsEditing(false);
     setEditedContent(comment.content); // Reset to original content
   }
@@ -84,36 +83,27 @@ export default function CardFooter({ comment, postUserId ,postId, setPostComment
       handleCancelEdit();
     }
   }
+
   return (
     <>
-      {/* Comments */}
-
-
-
-
       <div className="p-4">
         <div className="flex items-start gap-3">
           <img
             src={comment.commentCreator.photo.includes("/undefined") ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop" : comment.commentCreator.photo}
             alt={comment.commentCreator.name}
-
             className="w-10 h-10 rounded-full object-cover"
           />
           <div className="grow flex-1 bg-gray-50 rounded-2xl px-4 py-3">
             <h4 className="font-semibold text-sm text-gray-900">{comment.commentCreator.name}</h4>
-          {/* edit comment */}
-
-
-
-
-           {isEditing ? (
+            
+            {isEditing ? (
               <div className="mt-1">
                 <input
                   ref={editInputRef}
                   type="text"
                   value={editedContent}
                   onChange={(e) => setEditedContent(e.target.value)}
-                  
+                  onKeyDown={handleKeyPress}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={isLoading}
                 />
@@ -141,32 +131,36 @@ export default function CardFooter({ comment, postUserId ,postId, setPostComment
             )}
           </div>
 
-          {
-            isLoading ? <Spinner /> :
-              <>
-
-                {user?._id === postUserId && user?._id === comment.commentCreator._id &&
-                  <Dropdown>
-                    <DropdownTrigger className="cursor-pointer">
-                      <BsThreeDotsVertical className="w-5 h-5" />
-                    </DropdownTrigger>
-                    <DropdownMenu aria-label="Static Actions">
-                      <DropdownSection>
-                        <DropdownItem onClick={handleEditClick} key="edit">Edit </DropdownItem>
-                        <DropdownItem onClick={() => { deleteCommentHandler(comment._id) }} key="delete" className="text-danger" color="danger">
-                          Delete
-                        </DropdownItem>
-                      </DropdownSection>
-                    </DropdownMenu>
-                  </Dropdown>
-                }
-
-              </>
-          }
+          {!isLoading ? (
+            <>
+              {user?._id === postUserId && user?._id === comment.commentCreator._id && !isEditing && (
+                <Dropdown>
+                  <DropdownTrigger className="cursor-pointer">
+                    <BsThreeDotsVertical className="w-5 h-5" />
+                  </DropdownTrigger>
+                  <DropdownMenu aria-label="Static Actions">
+                    <DropdownSection>
+                      <DropdownItem key="edit" onClick={handleEditClick}>
+                        Edit
+                      </DropdownItem>
+                      <DropdownItem 
+                        onClick={deleteCommentHandler} 
+                        key="delete" 
+                        className="text-danger" 
+                        color="danger"
+                      >
+                        Delete
+                      </DropdownItem>
+                    </DropdownSection>
+                  </DropdownMenu>
+                </Dropdown>
+              )}
+            </>
+          ) : (
+            <Spinner />
+          )}
         </div>
-
       </div>
-
     </>
   )
 }

@@ -10,44 +10,96 @@ import {
     Input,
     Link,
     Textarea,
-    Divider
+    Divider,
+    form
 } from "@heroui/react";
 import { useRef, useState } from "react";
 import { IoMdPhotos } from "react-icons/io";
 import { file } from "zod";
+import { createPost, updatePost } from "../../services/postServices";
+import { ToastContainer, toast } from 'react-toastify';
+import { ca } from "zod/v4/locales";
 
 
 
 
-export default function CreatePostModal({ isOpen, onOpenChange }) {
+export default function CreatePostModal({ isOpen, onOpenChange, callback, post }) {
     const fileInput = useRef(null);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const bodyInput = useRef(null);
+    const [selectedFile, setSelectedFile] = useState(post?.image || null);
+    const [formDataFile, setFormDataFile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     function openFileInput() {
         fileInput.current.click();
-        console.log(fileInput.current);
+        // console.log(fileInput.current);
     }
     function getFile() {
-        console.log(fileInput.current.files);
+        //console.log(fileInput.current.files);
         const file = fileInput.current.files[0];
-        console.log(file);
+        setFormDataFile(file);
+        //console.log(file);
         setSelectedFile(URL.createObjectURL(file));
     }
+
+    // edit or create
+    async function handlePost() {
+        setIsLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append("body", bodyInput.current.value || " ");
+
+            if (formDataFile) {
+                formData.append("image", formDataFile);
+            }
+
+            let response;
+
+            if (post) {
+                response = await updatePost(post._id, formData);
+            } else {
+                response = await createPost(formData);
+            }
+
+            toast.success(response.data.message);
+            onOpenChange(false);
+            setFormDataFile(null);
+            bodyInput.current.value = "";
+            callback();
+
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+            // toast.error(error.response.data.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+
     return (
         <>
             {/* <Button color="primary" onPress={onOpen}>
         Open Modal
       </Button> */}
-            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
+            <Modal isOpen={isOpen} placement="top-center" onOpenChange={() => {
+                onOpenChange(false);
+                //selectedFile = null;
+                if (!post) {
+                    setFormDataFile(null);
+                }
+
+                // bodyInput.current.value = "";
+            }}>
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                <h5>Create Post</h5>
+                                <h5>{post ? 'Edit Post' : 'Create Post'}</h5>
                             </ModalHeader>
 
                             <ModalBody className="p-4">
                                 <Divider />
-                                <Textarea minRows={`${!selectedFile ? '50' : ''}`} placeholder="what is in your mind?" />
+                                <Textarea defaultValue={post?.body || ''} ref={bodyInput} minRows={`${!selectedFile ? '50' : ''}`} placeholder="what is in your mind?" />
                                 {selectedFile && <img src={selectedFile} alt="Post" className="w-full h-50" />}
                                 <Divider />
 
@@ -62,8 +114,8 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
                             <Divider />
                             <ModalFooter>
 
-                                <Button color="primary" className="w-full">
-                                    Post
+                                <Button isLoading={isLoading} onPress={handlePost} color="primary" className="w-full">
+                                    {post ? 'Edit' : 'Create'}
                                 </Button>
                             </ModalFooter>
                         </>

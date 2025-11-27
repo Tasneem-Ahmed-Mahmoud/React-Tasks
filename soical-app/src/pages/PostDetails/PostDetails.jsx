@@ -42,6 +42,7 @@ export default function PostDetails() {
             photo={post.user?.photo}
             name={post.user?.name}
             createdAt={post.createdAt}
+            creator={post.user?._id}
           />
           <CardBody
             isPostDetails={true}
@@ -56,7 +57,9 @@ export default function PostDetails() {
           {postComments && postComments.length > 0 && (
             <>
               {postComments.map((comment, index) => (
-                <CardFooter comment={comment} key={comment._id || index} />
+                <CardFooter comment={comment} key={comment._id || index}  postUserId={post?.user?._id}  postId={post._id}
+                setPostComments={setPostComments}
+                />
               ))}
             </>
           )}

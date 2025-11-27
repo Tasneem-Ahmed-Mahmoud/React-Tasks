@@ -9,10 +9,10 @@ import CreatePost from '../../components/CreatePost/CreatePost'
 export default function NewsFeed() {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
-    allPosts();
+    getAllPosts();
   }, []);
 
-  const allPosts = async () => {
+  const getAllPosts = async () => {
     const response = await getPosts();
     console.log(response.data);
     setPosts(response?.data?.posts);
@@ -20,10 +20,10 @@ export default function NewsFeed() {
   return (
     <>
 
- <CreatePost />
+ <CreatePost  allPosts={getAllPosts}/>
       {posts.length === 0 ? [...Array(5)].map((s, index) => <Skeleton key={index} />) :
         posts && posts.map((post) => (
-          <Post key={post.id} post={post} />
+          <Post key={post.id} post={post}  allPosts={getAllPosts}/>
         ))}
 
 
