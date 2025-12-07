@@ -4,13 +4,13 @@ import { BiBody } from "react-icons/bi";
 
 const url = import.meta.env.VITE_BASE_URL;
 
-export async function getPosts() {
+export  function getPosts(page) {
   return axios.get(`${url}/posts`, {
     headers: {
       token: localStorage.getItem("token"),
     },
     params: {
-      page: 1,
+      page: page,
       limit: 20,
       sort: "-createdAt",
     },

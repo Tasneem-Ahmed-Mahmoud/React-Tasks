@@ -135,7 +135,7 @@ export default function Navbar() {
               <p className="font-semibold">Signed in as</p>
               <p className="font-semibold">{user?.email}</p>
             </DropdownItem>
-            <DropdownItem key="settings">My Profile</DropdownItem>
+            <DropdownItem key="profile" as={Link} to="/profile">My Profile</DropdownItem>
 
             <DropdownItem key="logout" color="danger" onClick={() => { logout() }}>
               Log Out
